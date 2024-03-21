@@ -20,21 +20,16 @@ public static void main(String[] args) {
         xmain();
     }
 
-    public static void xmain() {
+    public static void xmain()   {
             // Kafka broker address; bind 9092 in container to 9092 on host, see compose file
-            String kafkaBrokerAddress = "0.0.0.0"; 
+            String kafkaBrokerAddress = "localhost"; 
             int kafkaBrokerPort = 9092; // Default SSL port for Kafka brokers
     
             try {
                 // Disable SSL certificate validation
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(null, new TrustManager[]{new X509TrustManager() {
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-                }}, null);
     
-                SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+    
+                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(kafkaBrokerAddress, kafkaBrokerPort);
                 sslSocket.startHandshake();
     
@@ -47,11 +42,7 @@ public static void main(String[] args) {
                 sslSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch(KeyManagementException e) {
-                e.printStackTrace();
-            } catch(NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            } 
     }
 }
 
